@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordinario unidad 2</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="optionSection">
+        <h1>Paint</h1>
+        <div class="titleColors">Colores</div>
+        <div class="colorButtons">
+            <input type="button" class="red" onclick="changeColor('red')">
+            <input type="button" class="blue" onclick="changeColor('blue')">
+            <input type="button" class="green" onclick="changeColor('green')">
+            <input type="button" class="yellow" onclick="changeColor('yellow')">
+            <input type="button" class="black" onclick="changeColor('black')">
+        </div>
+        <div class="titleFigures"> Figuras</div>
+        <div class="figureOption">
+            <input type="button" class="figureButtons" onclick="changeFigure(1)" value="Cuadrado">
+            <input type="button" class="figureButtons" onclick="changeFigure(2)" value="Circulo">
+            <input type="button" class="figureButtons" onclick="changeFigure(3)" value="Triángulo">
+        </div>
+        <div class="titleTools">Herramientas</div>
+        <div class="toolOption">
+            <input type="button" class="figureButtons" onclick="changeFigure(4)" value="Pincel">
+            <input type="button" class="figureButtons" onclick="changeFigure(5)" value="Borrador">
+        </div>
+        <div class="variableWidth">
+            <input type="button" class="lineWidth" onclick="plusSize(5)" value="+">
+            <input type="button" class="lineWidth" onclick="minusSize(5)" value="-">
+        </div>
+        <div class="downloadClear">
+            <input type="button" class="clearDownloadCanvas" onclick="clearCanvas()" value="Limpiar pizarra">
+            <input type="button" class="clearDownloadCanvas" onclick="downloadImage()" value="Descargar imagen">
+        </div>
+    </div>
+    <canvas width="1500" height="900" id="myCanvas"></canvas>
+    <script>
+        var color = "white";
+        var figure = 0;
+        var lineSize = 5;
+
+        function changeColor(newColor){
+            color = newColor;
+        }
+
+        function changeFigure(newFigure){
+            figure = newFigure
+        }
+
+        function plusSize(sizePlus){
+            lineSize = lineSize+sizePlus
+        }
+
+        function clearCanvas(){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function minusSize(sizeMinus){
+            lineSize = lineSize-sizeMinus
+            if(lineSize < 0 ){
+                lineSize = 5;
+            }
+        }
+
+        function downloadImage() {
+            
+            var dataURL = canvas.toDataURL("image/png");
+       
+            var downloadLink = document.createElement('a');
+            downloadLink.href = dataURL;
+            downloadLink.download = 'canvas_image.png';
+
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+
+        var canvas = document.getElementById('myCanvas');
+        var ctx = canvas.getContext('2d');
+
+        canvas.addEventListener("mousedown", (e) => {
+            var squareSize = 100;
+            var isClicking = false;
+
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = 'black';
+
+            switch(figure){
+                case 1:
+                ctx.beginPath();
+                ctx.fillStyle = color;
+                ctx.fillRect(e.layerX-380, e.layerY-50, squareSize, squareSize);
+                ctx.closePath();
+                    break;
+                case 2:
+                ctx.beginPath();
+                ctx.lineWidth = 5;
+                ctx.arc(e.layerX-330 ,e.layerY ,50 ,0 ,2*Math.PI);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = "white";
+                ctx.stroke();
+                ctx.closePath();
+                    break;
+                case 3:
+                ctx.beginPath();
+                ctx.fillStyle = color;
+            
+                
+                var triangleSize = 60;
+                var height = (Math.sqrt(3) / 2) * triangleSize;
+            
+                ctx.moveTo(e.layerX - triangleSize / 2, e.layerY + height / 2);
+                ctx.lineTo(e.layerX + triangleSize / 2, e.layerY + height / 2);
+                ctx.lineTo(e.layerX, e.layerY - height / 2);
+                ctx.lineTo(e.layerX - triangleSize / 2, e.layerY + height / 2);
+            
+                ctx.fill();
+                ctx.closePath();
+                    break;
+                case 4: 
+                isClicking = true;
+                ctx.beginPath();
+                ctx.lineWidth = lineSize;
+                ctx.strokeStyle = color;
+                ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+                    break;
+                case 5:
+                isClicking = true;
+                ctx.beginPath();
+                ctx.lineWidth = lineSize;
+                ctx.strokeStyle = "white";
+                ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+                    break;
+            }
+
+            canvas.addEventListener('mousemove', function (e) {
+                if (isClicking) {
+                    ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+                    ctx.stroke();
+                }
+            });
+
+            canvas.addEventListener('mouseup', function () {
+                isClicking = false;
+                ctx.closePath();
+            });
+
+            canvas.addEventListener('mouseleave', function () {
+                isClicking = false;
+                ctx.closePath();
+            });
+            /*
+            if(figure == 1){
+                ctx.beginPath();
+                ctx.fillStyle = color;
+                ctx.fillRect(e.layerX-380, e.layerY-50, squareSize, squareSize);
+                ctx.closePath();
+            }else if(figure == 2){
+                ctx.beginPath();
+                ctx.arc(e.layerX-330 ,e.layerY ,50 ,0 ,2*Math.PI);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = "white";
+                ctx.stroke();
+                ctx.closePath();
+            }else if(figure ==3){
+
+            }
+            */
+        });
+    </script>
+</body>
+</html>
